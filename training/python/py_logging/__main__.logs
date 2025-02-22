@@ -1,4 +1,4 @@
-2025-02-22 11:07:49,689:INFO:<module>:This is logged to only the log file
-2025-02-22 11:07:49,689:ERROR:<module>:This is logged to both the log file and console
-2025-02-22 11:08:48,278:INFO:<module>:This is logged to only the log file
-2025-02-22 11:08:48,279:ERROR:<module>:This is logged to both the log file and console
+2025-02-22 11:21:58,303:INFO:<module>:This is logged to only the log file
+2025-02-22 11:21:58,303:INFO:<module>:This is logged to only the file because though it is CRITICAL, the level is lower than the set level for streamhandler
+2025-02-22 11:21:58,303:ERROR:<module>:This is logged to only the file because though it is an error, it is not critical
+2025-02-22 11:21:58,303:ERROR:<module>:This is logged to both the console and file because it is an error and it is CRITICAL

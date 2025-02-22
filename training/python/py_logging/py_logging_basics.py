@@ -14,6 +14,11 @@ stream_handler = logging.StreamHandler()
 stream_handler.setLevel(logging.ERROR)
 stream_formatter = logging.Formatter("%(asctime)s:%(name)s:%(levelname)s:%(message)s", datefmt="%Y-%m-%d %H:%M:%S")
 stream_handler.setFormatter(stream_formatter)
+# add filter using Filter class
+class FilterLogs(logging.Filter):
+    def filter(self, record):
+        return "CRITICAL" in record.getMessage()
+stream_handler.addFilter(FilterLogs())
 logger.addHandler(stream_handler)
 
 file_handler = logging.FileHandler(f"{__name__}.logs")
@@ -25,4 +30,6 @@ logger.propagate=False
 
 if __name__ == "__main__":
     logger.info("This is logged to only the log file")
-    logger.error("This is logged to both the log file and console")
+    logger.info("This is logged to only the file because though it is CRITICAL, the level is lower than the set level for streamhandler")
+    logger.error("This is logged to only the file because though it is an error, it is not critical")
+    logger.error("This is logged to both the console and file because it is an error and it is CRITICAL")
