@@ -1,0 +1,4 @@
+2025-02-22 11:07:49,689:INFO:<module>:This is logged to only the log file
+2025-02-22 11:07:49,689:ERROR:<module>:This is logged to both the log file and console
+2025-02-22 11:08:48,278:INFO:<module>:This is logged to only the log file
+2025-02-22 11:08:48,279:ERROR:<module>:This is logged to both the log file and console
