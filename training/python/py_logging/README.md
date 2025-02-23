@@ -17,7 +17,25 @@ Low level (child) loggers forward messages to higher-level (parents/ancestors).
 - Messages are forwarded to higher level loggers only if the logging level and filters at the child logger are satisfied.
 - Can be disabled by setting the `propagate` property of the logger to false e.g `logger.propagate=False`.
 
+### Logger level and handler level
+The logger's level acts as primary filter. It determines which log messages are even considered for processing by the logger's ahndlers. If a log message's level is below the logger's level, it is discarded immediately.
+
+The handler's level acts as a secondary filter. It determines which log messages, after passign the logger's filter are actually emiited by that specific handler. If a log message's level is below the handler's level, it is ignored by that handler.
+
+### Logger Hierarchy
+Loggers are organized in a hierarchical namespace using dot-separated names. e.g., given `myapp.module.submodule`, `myapp` is a parent of `myapp.module` and `myapp.module` is a child of `myapp`.
+
+The root logger (named `''`) is the ultimate parent of all loggers.
 ### Propagation
+propagation is the mechanism by which log messages are passed from a logger to its parent loggers in the logger hierarchy.
+
+**Process**
+1. A log messaged is generated when a logging method (e.g. `logger.infoo()`) is called.
+2. The logger's level is checked. If the message's level is below the logger's level, the message is discarded otherwise it is passed to the logger's handlers.
+3. Each handler performs its own level filtering and formatting.
+4. After the logger handlers have processed the message, the logger's propagate attribute is checked. If `propagate` is `True` (the default), the message is passed to the logger's parent logger.
+5. The parent logger repeats steps 2-4. This process continues up the hierarchy until the roort logger is reached or a logger with `propagate` set to `False` is encountered.
+
 ```mermaid
 graph TD
     A[Log Message Generated] --> B{Logger Level Check}
@@ -37,9 +55,3 @@ It is the preffered method for complex logging setups and logging in production 
 Lambda functions can not be used directly in `dictConfig()` because it relies on pickling which does support lambdas. Work around is to use `eval()` - though it is less safe.
 
 `disable_existing_loggers` set to `False` prevents existing loggers from being disabled, which is generally good practice.
-
-**Logger and handler levels**
-The logger's level acts as primary filter. It determines which log messages are even considered for processing by the logger's ahndlers. If a log message's level is below the logger's level, it is discarded immediately.
-
-The handler's level acts as a secondary filter. It determines which log messages, after passign the logger's filter are actually emiited by that specific handler. If a log message's level is below the handler's level, it is ignored by that handler.
-
