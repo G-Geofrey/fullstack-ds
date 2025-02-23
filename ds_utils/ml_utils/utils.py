@@ -1,5 +1,8 @@
 import importlib
 import sys
+import logging
+
+from pathlib import Path
 
 def import_module(module_name, module_path=None):
     """
@@ -49,4 +52,74 @@ def import_module(module_name, module_path=None):
         print(f"An unexpected error occured: {e}")
     finally:
         sys.path = original_path
+
+    
+def get_logger(name, log_level=logging.INFO, log_format=None, stream=True, log_file=None, propagate=False):
+    """
+    Retrieves or creates a logger with the specified configuration.
+
+    This function configures a logger with the given name, log level, format, and output streams (console and/or file).
+    It allows for customization of log messages and their destination.
+
+    Args:
+        name (str): The name of the logger (typically __name__).
+        log_level (int, optional): The logging level (e.g., logging.DEBUG, logging.INFO, logging.WARNING, logging.ERROR, logging.CRITICAL). Defaults to logging.INFO.
+        log_format (str, optional): The format of the log messages. Defaults to "%(asctime)s:%(name)s:%(levelname)s:%(message)s".
+        stream (bool, optional): If True, logs will be output to the console (stdout). Defaults to True.
+        log_file (str, optional): The path to the log file. If provided, logs will be written to this file. Defaults to None (no file logging).
+        propagate (bool, optional): Determines if log messages should propagate to parent loggers. Defaults to False.
+
+    Returns:
+        logging.Logger: The configured logger object.
+
+    Example:
+        >>> import logging
+        >>> logger = get_logger(__name__, log_level=logging.DEBUG, log_file="my_app.log")
+        >>> logger.debug("This is a debug message.")
+        >>> logger.info("This is an info message.")
+
+    Notes:
+        - If 'log_file' is provided, the function ensures that the parent directory exists.
+        - The 'logger.handlers = []' line clears any existing handlers, ensuring consistent logging behavior.
+        - The date format used in the log messages is "YYYY-MM-DD HH:MM:SS".
+        - When stream or log_file is None, the stream handler will be added.
+    """
+
+    if log_format is None:
+        log_format = "%(asctime)s:%(name)s:%(levelname)s:%(message)s"
+    formatter = logging.Formatter(log_format, datefmt="%Y-%m-%d %H:%M:%S")
+
+    logger = logging.getLogger(name)
+    logger.setLevel(log_level)
+    
+    # overwrite all handlers if any
+    logger.handlers = []
+
+    if stream or log_file is None:
+        stream_handler = logging.StreamHandler()
+        stream_handler.setLevel(log_level)
+        stream_handler.setFormatter(formatter)
+        logger.addHandler(stream_handler)
+
+    if log_file is not None:
+        log_file = Path(log_file)
+        log_file.parent.mkdir(parents=True, exist_ok=True)
+
+        file_handler = logging.FileHandler(log_file.as_posix())
+        file_handler.setLevel(log_level)
+        file_handler.setFormatter(formatter)
+        logger.addHandler(file_handler)
+
+    logger.propagate = propagate
+
+    return logger
+
+
+        
+
+
+
+
+
+
 
