@@ -6,7 +6,6 @@ logging.basicConfig(
     format="%(asctime)s:%(name)s:%(levelname)s:%(message)s"
 )
 
-
 # Named loggers
 logger = logging.getLogger(__name__)
 
@@ -21,7 +20,9 @@ class FilterLogs(logging.Filter):
 stream_handler.addFilter(FilterLogs())
 logger.addHandler(stream_handler)
 
-file_handler = logging.FileHandler(f"{__name__}.logs")
+file_handler = logging.FileHandler(f"./logs/{__name__}.logs")
+
+file_handler.setLevel(logging.INFO)
 file_handler_formatter = logging.Formatter("%(asctime)s:%(levelname)s:%(funcName)s:%(message)s")
 file_handler.setFormatter(file_handler_formatter)
 # Add filter using lambda function
@@ -36,3 +37,4 @@ if __name__ == "__main__":
     logger.info("This is logged to only the file because though it is CRITICAL, the level is lower than the set level for streamhandler")
     logger.error("This is logged to only the file because though it is an error, it is not critical")
     logger.error("This is logged to both the console and file because it is an error and it is CRITICAL")
+
