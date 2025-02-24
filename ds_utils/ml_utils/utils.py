@@ -155,7 +155,7 @@ class ProjectDefinition:
         self._description = description
 
     @property
-    def project_namespace(self):
+    def project_definition(self):
         """
         Returns a dictionary containing project namespace information.
         """
