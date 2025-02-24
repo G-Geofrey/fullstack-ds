@@ -1,4 +1,0 @@
-2025-02-23 12:50:14,732:yaml_config:<module>:module_name:INFO:This is logged to only the log file because it is a higher level than the one for console
-2025-02-23 12:50:14,732:yaml_config:<module>:module_name:INFO:This is logged to only the file because though it is CRITICAL, the level is higher than the one for console
-2025-02-23 12:50:14,732:yaml_config:<module>:module_name:ERROR:This is logged to only the file because though it is an error, it is not critical
-2025-02-23 12:50:14,732:yaml_config:<module>:module_name:ERROR:This is logged to both the console and file because it is an error and it is CRITICAL
