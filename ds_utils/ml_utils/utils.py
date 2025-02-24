@@ -4,6 +4,8 @@ import logging
 
 from pathlib import Path
 from IPython import get_ipython
+from datetime import datetime
+from enum import Enum
 
 def reset_kernel():
     """Resets the IPython kernel's namespace, clearing all variables and imports.
@@ -126,6 +128,14 @@ def get_logger(name, log_level=logging.INFO, log_format=None, stream=True, log_f
 
     return logger
 
+# ==================== Project Defintion ====================
+
+# Enumerations
+class TimeFormat(Enum):
+    NONE = "none"
+    DATE = "date"
+    TIME = "datetime"
+
 class ProjectDefinition:
     """
     A class for generating project-related namespace strings.
@@ -198,3 +208,35 @@ class ProjectDefinition:
     def model_name(self):
         """Returns the model name, generated from the experiment name."""
         return f"{self.experiment_name}-model"
+    
+    def get_run_name(self, name, time_fmt=TimeFormat.NONE):
+        """
+        Generates a run name with optional date/time stamps.
+
+        Args:
+            name (str): The base name for the run.
+            time_fmt (TimeFormat, optional): The time format to use. Defaults to TimeFormat.NONE.
+
+        Returns:
+            str: The generated run name.
+
+        Raises:
+            ValueError: If the time_fmt is not a valid TimeFormat.
+        """
+
+        DATE_FORMAT = "%Y-%m-%d"
+        TIME_FORMAT = "%Y-%m-%d-%H-%M-%S"
+
+        try:
+            time_fmt_enum = TimeFormat(time_fmt)
+        except ValueError:
+            raise ValueError(f"time_fmt must be one of {[x.value for x in TimeFormat]}")
+        
+        if time_fmt_enum == TimeFormat.NONE:
+            return f"{self.experiment_name}-run-{name}"
+        elif time_fmt_enum == TimeFormat.DATE:
+            return f"{self.experiment_name}-run-{name}-{datetime.today().strftime(DATE_FORMAT)}"
+        else:
+            return f"{self.experiment_name}-run-{name}-{datetime.today().strftime(TIME_FORMAT)}"
+        
+
