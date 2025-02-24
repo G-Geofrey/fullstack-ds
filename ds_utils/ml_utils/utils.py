@@ -134,7 +134,7 @@ def get_logger(name, log_level=logging.INFO, log_format=None, stream=True, log_f
 class TimeFormat(Enum):
     NONE = "none"
     DATE = "date"
-    TIME = "datetime"
+    DATETIME = "datetime"
 
 class ProjectDefinition:
     """
@@ -209,7 +209,7 @@ class ProjectDefinition:
         """Returns the model name, generated from the experiment name."""
         return f"{self.experiment_name}-model"
     
-    def get_run_name(self, name, time_fmt=TimeFormat.NONE):
+    def get_run_name(self, name, time_fmt=TimeFormat.DATETIME):
         """
         Generates a run name with optional date/time stamps.
 
