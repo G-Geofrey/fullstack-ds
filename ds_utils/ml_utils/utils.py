@@ -3,6 +3,18 @@ import sys
 import logging
 
 from pathlib import Path
+from IPython import get_ipython
+
+def reset_kernel():
+    """Resets the IPython kernel's namespace, clearing all variables and imports.
+
+    This function is only effective within an IPython environment (e.g., Jupyter notebooks).
+    """
+    ipython = get_ipython()
+    if ipython:
+        ipython.reset(True)
+    else:
+        print("Warning: Not running in an IPython environment. Namespace reset skipped.")
 
 def import_module(module_name, module_path=None):
     """
@@ -36,7 +48,7 @@ def import_module(module_name, module_path=None):
     """
     original_path = sys.path[:]
     try:
-        if module_path:
+        if module_path is not None:
             sys.path.insert(0, module_path)
 
         if module_name in sys.modules:
@@ -114,12 +126,75 @@ def get_logger(name, log_level=logging.INFO, log_format=None, stream=True, log_f
 
     return logger
 
+class ProjectDefinition:
+    """
+    A class for generating project-related namespace strings.
+    """
 
-        
+    def __init__(self, project, version, description=None):
+        """
+        Initializes the NamespaceHandler.
 
+        Args:
+            project (str): The project name.
+            version (str): The project version.
+            description (str, optional): A description of the project. Defaults to a generated description.
+        """
+        self._project = project
+        self._version = version
+        self._description = description
 
+    @property
+    def project_namespace(self):
+        """
+        Returns a dictionary containing project namespace information.
+        """
+        return {
+            "project_name": self.project,
+            "project_version": self.version,
+            "experiment_name": self.experiment_name,
+            "model_name": self.model_name,
+        }
 
+    @property
+    def project(self):
+        """Returns the project name."""
+        return self._project
 
+    @project.setter
+    def project(self, project_name):
+        """Sets the project name."""
+        self._project = project_name
 
+    @property
+    def version(self):
+        """Returns the project version with dots replaced by hyphens."""
+        return self._version.replace(".", "-")
 
+    @version.setter
+    def version(self, version_name):
+        """Sets the project version."""
+        self._version = version_name
 
+    @property
+    def description(self):
+        """Returns the project description, or a default description if none is set."""
+        if self._description is None:
+            return f"Version {self.version} of {self.project} project"
+        else:
+            return self._description
+
+    @description.setter
+    def description(self, description):
+        """Sets the project description."""
+        self._description = description
+
+    @property
+    def experiment_name(self):
+        """Returns the experiment name, generated from the project and version."""
+        return f"{self.project}-v{self.version}"
+
+    @property
+    def model_name(self):
+        """Returns the model name, generated from the experiment name."""
+        return f"{self.experiment_name}-model"
